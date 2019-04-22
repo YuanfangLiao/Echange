@@ -1,9 +1,11 @@
 from django.db import models
 
-
 # Create your models here.
 
 # 限制IntegerField的最大最小值
+from myuser.models import MyUser
+
+
 class IntegerRangeField(models.IntegerField):
     def __init__(self, verbose_name=None, name=None, min_value=None, max_value=None, **kwargs):
         self.min_value, self.max_value = min_value, max_value
@@ -26,6 +28,7 @@ class Goods(models.Model):
     picture = models.CharField(u'图片路径', max_length=1000)
     detail = models.TextField(u'详细介绍', max_length=2000, null=True)
     want = models.CharField(u'想换的', max_length=1000, null=True)
+    publisher = models.ForeignKey(to=MyUser, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return self.title

@@ -84,7 +84,7 @@ export default {
             // console.log(err)
           })
         } else {
-          console.log('submit not valid')
+          that.$message.error('submit not valid')
           return false
         }
       })

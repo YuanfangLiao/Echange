@@ -19,6 +19,34 @@ Vue.prototype.$axios = axios
 Vue.use(ElementUI, { size: 'small' })
 Vue.config.productionTip = false
 
+// loading框设置局部刷新，且所有请求完成后关闭loading框
+let loading
+let needLoadingRequestCount = 0 // 声明一个对象用于存储请求个数
+function startLoading () {
+  loading = Vue.prototype.$loading({
+    lock: true,
+    text: '努力加载中...',
+    background: 'rgba(0,0,0,0.5)',
+    target: document.querySelector('.loading-area') // 设置加载动画区域
+  })
+}
+function endLoading () {
+  loading.close()
+}
+function showFullScreenLoading () {
+  if (needLoadingRequestCount === 0) {
+    startLoading()
+  }
+  needLoadingRequestCount++
+}
+function hideFullScreenLoading () {
+  if (needLoadingRequestCount <= 0) return
+  needLoadingRequestCount--
+  if (needLoadingRequestCount === 0) {
+    endLoading()
+  }
+}
+
 let token = localStorage.getItem('Token')
 if (token) {
   // 设置vuex状态已登陆
@@ -28,21 +56,27 @@ if (token) {
 // http request 拦截器
 axios.interceptors.request.use(
   config => {
+    if (config.isLoading !== false) { // 如果配置了isLoading: false，则不显示loading
+      showFullScreenLoading()
+    }
     if (localStorage.Token) { // 判断token是否存在
       config.headers.Authorization = 'Token ' + localStorage.Token // 将token设置成请求头
     }
     return config
   },
   err => {
+    hideFullScreenLoading()
     return Promise.reject(err)
   }
 )
 // http response 拦截器
 axios.interceptors.response.use(
   response => {
+    hideFullScreenLoading() // 响应成功关闭loading
     return response
   },
   error => {
+    hideFullScreenLoading() // 响应成功关闭loading
     if (error.response) {
       switch (error.response.status) {
         case 401: {
@@ -61,12 +95,12 @@ router.beforeEach((to, from, next) => {
   let token = localStorage.getItem('Token')
   if (token) {
     let userinfo = store.state.userinfo
-    console.log(userinfo)
+    console.log('同步前的userinfo  ', userinfo)
     // 如果已经登陆且没有用户数据，从接口获取数据并存入vuex
     if (userinfo == null || !userinfo.username) {
       axios.get('/user/info').then(res => {
         let userinfo = res.data
-        console.log(userinfo)
+        console.log('同步后的userinfo  ', userinfo)
         store.dispatch('setUserinfo', userinfo)
       })
     }
@@ -94,7 +128,7 @@ router.beforeEach((to, from, next) => {
 
 // 执行完导航钩子函数，定位滚动条到顶端
 router.afterEach(router => {
-  window.scroll(0, 0)
+  // window.scroll(0, 0)
 })
 
 /* eslint-disable no-new */

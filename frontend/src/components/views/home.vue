@@ -11,11 +11,11 @@
     <div class="my-index-box">
       <el-col :span="8"
               v-for="item of goods_list"
-              :key="item['id']"
-              :offset="item['id'] > 0 ? 2 : 0"
+              :key="item.id"
+              :offset="item.id > 0 ? 2 : 0"
               class="goods-card">
         <el-card :body-style="{ padding: '0px' }">
-          <img :src="base_url + item.picture.split('$$$')[0]"
+          <img :src="base_url + item.picture[0]"
                class="image">
           <div style="padding: 14px;">
             <span>{{item.title}}</span>
@@ -23,7 +23,8 @@
               <time class="time">{{ item.create_time | date }}</time>
               <br /><br />
               <el-button type="text"
-                         class="button">查看详情</el-button>
+                         class="button"
+                         @click="dumpDetail(item.id)">查看详情</el-button>
             </div>
           </div>
         </el-card>
@@ -61,6 +62,11 @@ export default {
       let minute = date.getMinutes()
       let second = date.getSeconds()
       return year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second
+    }
+  },
+  methods: {
+    dumpDetail (id) {
+      this.$router.push(`/goods/${id}`)
     }
   }
 }

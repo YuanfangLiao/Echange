@@ -16,8 +16,12 @@ class GoodsView(APIView):
 
     # 获取商品，默认获取全部商品
     def get(self, request):
-        goods_queryset = Goods.objects.all()
-        ser_obj = GoodsSerializer(goods_queryset, many=True)
+        id = request.query_params.get('id')
+        if id:
+            goods = Goods.objects.filter(pk=id)
+        else:
+            goods = Goods.objects.all()
+        ser_obj = GoodsSerializer(goods, many=True)
         return Response(ser_obj.data)
 
     # 增加商品时调用

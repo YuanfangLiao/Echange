@@ -45,8 +45,8 @@ export default {
     }
   },
   mounted () {
-    console.log(this.$store.state.base_url)
-    console.log(this.$store.state.userinfo)
+    console.log('获取pic基本路径 ', this.$store.state.base_url)
+    console.log('获取mount中store中userinfo ', this.$store.state.userinfo)
   },
   name: 'myHeaderTop',
   methods: {
@@ -91,9 +91,14 @@ export default {
         return false
       }
     },
-    myusername: function () {
+    myusername: {
+      get: function () {
       // if (this.$store.state.userinfo.username)
-      return localStorage.getItem('username')
+        return localStorage.getItem('username')
+      },
+      set: function (newValue) {
+        console.log(newValue)
+      }
     }
   }
 }

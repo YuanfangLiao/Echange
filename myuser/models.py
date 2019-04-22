@@ -14,10 +14,11 @@ class MyUser(AbstractUser):
     # 用户手机号,
     phone = models.CharField('手机号', max_length=11, null=True)
     # 用户联系方式
-    address = models.CharField('联系方式', max_length=50, null=True)
+    address = models.CharField('地址', max_length=50, null=True, default='用户还没有设置地址')
     level = models.IntegerField('用户级别', default=1, null=True)
     credit = models.IntegerField('信用分', default=300, null=True)
-    picture = models.CharField('头像',max_length=500, default='img/timg.jpg')
+    picture = models.CharField('头像', max_length=500, default='img/timg.jpg')
+    signature = models.CharField('个性签名', max_length=200, default='这个人很懒，什么都没留下')
 
     def __str__(self):
         return self.username

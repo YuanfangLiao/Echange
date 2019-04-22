@@ -4,12 +4,15 @@ import random
 from PIL import Image
 from django.http import JsonResponse, HttpResponse
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from DjangoGoodsExchange import settings
 from goods.models import Goods
 
-
 # 通用获取所有分类信息接口
+from goods.serializers import GoodsSerializer
+
+
 def get_all_goods_type(request):
     all = Goods.GOODS_TYPE
     data = []
@@ -64,3 +67,20 @@ def del_pic(request):
         os.remove(url)
         print('删除一张照片')
         return JsonResponse({'flag': 'success'})
+
+
+class SimilarGoodsApi(APIView):
+
+    # 同类推荐算法
+    def get(self, request):
+        id = request.query_params.get('id')
+        goods = Goods.objects.filter(pk=id).first()
+        type = goods.type
+        goods_queryset = Goods.objects.filter(type=type).exclude(pk=id).order_by('-create_time')
+        if not goods_queryset:
+            goods_queryset = Goods.objects.all().order_by('-create_time')
+        if len(goods_queryset) > 5:
+            goods_queryset = goods_queryset[:5]
+
+        ser_obj = GoodsSerializer(goods_queryset, many=True)
+        return Response(ser_obj.data)

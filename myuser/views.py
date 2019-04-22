@@ -1,5 +1,4 @@
 from django.contrib.auth import authenticate, login
-from django.shortcuts import render
 
 # Create your views here.
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication, TokenAuthentication
@@ -60,3 +59,31 @@ class MyUserView(APIView):
         user = request.user
         ser_user = MyUserSerializer(user)
         return Response(ser_user.data)
+
+    def put(self, request):
+        user = request.user
+        ser_obj = MyUserSerializer(user, data=request.data)
+        if ser_obj.is_valid():
+            ser_obj.save()
+            print(ser_obj.validated_data)
+            return Response({'flag': 'success'})
+        print(ser_obj.errors)
+        return Response(ser_obj.errors)
+
+
+class ChangePassView(APIView):
+    authentication_classes = (BasicAuthentication, SessionAuthentication, TokenAuthentication)
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        user = request.user
+        data = request.data
+        username = user.username
+        if data.get('new_passwd') != data.get('conf_passwd'):
+            return Response({'flag': 'error', 'msg': '请输入两次一样的密码'})
+        auth_user = authenticate(username=username, password=data.get('old_passwd'))
+        if not auth_user:
+            return Response({'flag': 'error', 'msg': '旧密码错误'})
+        user.set_password(data.get('new_passwd'))
+        user.save()
+        return Response({'flag': 'success'})

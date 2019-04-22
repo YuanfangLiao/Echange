@@ -34,7 +34,9 @@ urlpatterns = \
         path('api_test', views.api),
         path('book', views.BookView.as_view()),
         path('user/', include((user_url, 'myuser'), namespace='myuser')),
+        # goods名字起的不太合理，给一个另外的名字的接口
         path('goods/', include((goods_url, 'goods'), namespace='goods')),
+        path('goods_api/', include((goods_url, 'goods'), namespace='shop')),
         # 通用api写在这里
         path('api/', include((api_url, 'app'), namespace='app'))
     ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
