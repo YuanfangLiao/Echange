@@ -1,6 +1,10 @@
 <template>
   <div class="page">
-
+    <el-breadcrumb separator-class="el-icon-arrow-right">
+      <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item>我要发布</el-breadcrumb-item>
+    </el-breadcrumb>
+    <br/>
     <el-steps :active="active"
               finish-status="success">
       <el-step title="填写简单介绍"></el-step>
@@ -52,7 +56,8 @@
       <el-form-item label="新旧成色"
                     required
                     v-show="active === 0">
-        <el-slider v-model="form.condition" :step="5"
+        <el-slider v-model="form.condition"
+                   :step="5"
                    :min="30"
                    show-input> </el-slider>
       </el-form-item>
@@ -113,7 +118,8 @@
                  v-show="active === 2">
       <el-carousel-item v-for="item in this.form.picture.split('$$$').filter(item => item != '')"
                         :key="item">
-        <img :src="baseUrl + item" width="100%">
+        <img :src="baseUrl + item"
+             width="100%">
         <!-- <h3>{{ baseUrl + item }}</h3> -->
       </el-carousel-item>
     </el-carousel>
@@ -212,18 +218,18 @@ export default {
         type: 'warning'
       }).then(() => {
         that.$axios.post('/goods/goods', this.form).then(res => {
-        // 发布成功
+          // 发布成功
           if (res.data.flag === 'success') {
-            this.$notify.success({title: '发布成功',
-              message: '发布商品成功'})
+            this.$notify.success({ title: '发布成功',
+              message: '发布商品成功' })
             this.$router.push('/home')
           } else {
-            this.$notify.error({title: '发布失败',
-              message: res.data.error})
+            this.$notify.error({ title: '发布失败',
+              message: res.data.error })
           }
         }).catch(err => {
-          this.$notify.error({title: '发布失败',
-            message: '发布商品失败'})
+          this.$notify.error({ title: '发布失败',
+            message: '发布商品失败' })
           console.log(err)
         })
       }).catch(() => {

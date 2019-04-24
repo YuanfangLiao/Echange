@@ -8,10 +8,13 @@
 
 <script>
 import MyFooter from './components/common/MyFooter'
-
+import { timeFormat } from './assets/js/filters.js'
 export default {
   name: 'App',
-  components: {MyFooter}
+  components: {MyFooter},
+  filters: {
+    timeFormat
+  }
 }
 </script>
 

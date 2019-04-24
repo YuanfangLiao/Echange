@@ -1,5 +1,11 @@
 <template>
   <div class="page">
+    <el-breadcrumb separator-class="el-icon-arrow-right">
+      <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item>全部商品</el-breadcrumb-item>
+      <el-breadcrumb-item>详细信息</el-breadcrumb-item>
+    </el-breadcrumb>
+    <br/>
     <el-row>
       <el-col :span="8">
         <div class="grid-content bg-purple">
@@ -324,5 +330,8 @@ export default {
 .inner-detail-good div {
   display: flex;
   flex-direction: column;
+}
+.el-icon-arrow-right{
+    margin-bottom: 20px
 }
 </style>

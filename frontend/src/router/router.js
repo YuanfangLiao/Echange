@@ -7,6 +7,7 @@ import Login from '../components/views/Login'
 import Register from '../components/views/Register'
 import Publish from '../components/views/Publish'
 import Personal from '../components/views/Personal'
+import Want from '../components/views/goods/Want'
 import GoodsDetail from '../components/views/goods/GoodsDetail'
 // import GoodsDetail from '../components/views/goods/GoodsDetail'
 
@@ -35,6 +36,12 @@ export default new Router({
           path: ':id',
           name: 'goodsDetail',
           component: GoodsDetail,
+          meta: { isLogin: true }
+        },
+        {
+          path: ':id/want',
+          name: 'goodsWant',
+          component: Want,
           meta: { isLogin: true }
         }
       ]
