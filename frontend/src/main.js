@@ -8,6 +8,7 @@ import router from './router/router'
 import store from './store'
 import axios from 'axios'
 import qs from 'qs'
+import { timeFormat } from './assets/js/filters.js'
 
 Vue.prototype.$qs = qs
 axios.defaults.withCredentials = true
@@ -18,6 +19,9 @@ Vue.prototype.$axios = axios
 
 Vue.use(ElementUI, { size: 'small' })
 Vue.config.productionTip = false
+
+// 全局过滤器
+Vue.filter('timeFormat', timeFormat)
 
 // loading框设置局部刷新，且所有请求完成后关闭loading框
 let loading

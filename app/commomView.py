@@ -7,12 +7,13 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from DjangoGoodsExchange import settings
-from goods.models import Goods
+from goods.models import Goods, Order
 
 # 通用获取所有分类信息接口
 from goods.serializers import GoodsSerializer
 
 
+# 通用获取所有种类的接口
 def get_all_goods_type(request):
     all = Goods.GOODS_TYPE
     data = []
@@ -25,6 +26,7 @@ def get_all_goods_type(request):
     return JsonResponse({'code': 200, 'data': data}, json_dumps_params={'ensure_ascii': False})
 
 
+# 通用上传照片接口
 def upload_pic(request):
     if request.method == 'POST':
         data = request.FILES['file']
@@ -59,6 +61,7 @@ def upload_pic(request):
         return JsonResponse({'flag': 'success', 'url': url}, json_dumps_params={'ensure_ascii': False})
 
 
+# 通用删除照片接口
 def del_pic(request):
     if request.method == 'POST':
         # print(request.POST.get('url'))
@@ -67,6 +70,19 @@ def del_pic(request):
         os.remove(url)
         print('删除一张照片')
         return JsonResponse({'flag': 'success'})
+
+
+# 用于前端检查该某用户有没有对某商品下过单
+class UserOrderCheckApi(APIView):
+    def get(self, request):
+        goods_id = request.query_params.get('id')
+        user = request.user
+        order = Order.objects.filter(buyer=user, goods_id=goods_id)
+        if order:
+            # 已经有记录了，阻止进入
+            return Response({'flag': 'fail', 'msg': '你已经提交过这个产品的交换意向了'})
+        else:
+            return Response({'flag': 'success'})
 
 
 class SimilarGoodsApi(APIView):

@@ -43,7 +43,7 @@
         </el-table-column>
         <el-table-column prop="want">
           <template slot-scope="scope">
-            估价：<span style="color:#F56C6C">¥<span style="color:#F56C6C;font-size:20px">{{ scope.row.price }}</span>元</span><br />
+            估价：<span style="color:#F56C6C">¥<span style="color:#F56C6C;font-size:20px">{{ scope.row.price }}</span></span><br />
             想换: {{ scope.row.want }}
           </template>
         </el-table-column>

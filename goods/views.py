@@ -6,8 +6,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from goods.models import Goods
-from goods.serializers import GoodsSerializer
+from goods.models import Goods, Order, MyCollection
+from goods.serializers import GoodsSerializer, OrderSerializer, CollectionSerializer
 
 
 class GoodsView(APIView):
@@ -17,19 +17,120 @@ class GoodsView(APIView):
     # 获取商品，默认获取全部商品
     def get(self, request):
         id = request.query_params.get('id')
-        if id:
-            goods = Goods.objects.filter(pk=id)
+        query = request.query_params.get('query')
+        # 如果查询是查询'我的商品'
+        if query == 'mine':
+            goods = Goods.objects.filter(publisher=request.user)
+            ser_obj = GoodsSerializer(goods, many=True)
+            print(ser_obj.data)
+            return Response(ser_obj.data)
         else:
-            goods = Goods.objects.all()
-        ser_obj = GoodsSerializer(goods, many=True)
-        return Response(ser_obj.data)
+            if id:
+                goods = Goods.objects.filter(pk=id)
+            else:
+                goods = Goods.objects.all()
+            ser_obj = GoodsSerializer(goods, many=True)
+            return Response(ser_obj.data)
 
     # 增加商品时调用
     def post(self, request):
         good_obj = request.data
         print(good_obj)
-        ser_obj = GoodsSerializer(data=good_obj)
-        if ser_obj.is_valid():
-            ser_obj.save()
+        # good_obj['publisher'] = request.user.id
+        try:
+            Goods.objects.create(title=good_obj.get('title'), type=good_obj.get('type'),
+                                 price=good_obj.get('price'), brand=good_obj.get('brand'),
+                                 condition=good_obj.get('condition'), picture=good_obj.get('picture'),
+                                 detail=good_obj.get('detail'), want=good_obj.get('want'),
+                                 publisher=request.user)
             return Response({'flag': 'success'})
-        return Response(ser_obj.errors)
+        except Exception as e:
+            return Response({'flag': 'error', 'error': str(e)})
+
+    def put(self, request):
+        req_data = request.data
+        try:
+            Goods.objects.filter(id=req_data.get('id')).update(title=req_data.get('title'),
+                                                               type=req_data.get('type'),
+                                                               price=req_data.get('price'),
+                                                               brand=req_data.get('brand'),
+                                                               condition=req_data.get('condition'),
+                                                               picture=req_data.get('picture'),
+                                                               detail=req_data.get('detail'),
+                                                               want=req_data.get('want'))
+            # print(req_data)
+            return Response({'flag': 'success'})
+        except Exception as e:
+            return Response({'flag': 'error', 'error': str(e)})
+
+
+class OrderView(APIView):
+    authentication_classes = (BasicAuthentication, SessionAuthentication, TokenAuthentication)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        id = request.query_params.get('id')
+        query = request.query_params.get('query')
+        # 如果查询是查询'我的购买'
+        if query == 'mine':
+            orders = Order.objects.filter(buyer=request.user)
+            ser_obj = OrderSerializer(orders, many=True)
+            print(ser_obj.data)
+            return Response(ser_obj.data)
+        else:
+            if id:
+                orders = Order.objects.filter(pk=id)
+            else:
+                orders = Order.objects.all()
+            ser_obj = OrderSerializer(orders, many=True)
+            return Response(ser_obj.data)
+
+    def post(self, request):
+        order_obj = request.data
+        try:
+            Order.objects.create(msg=order_obj.get('msg'), buyer=request.user, goods_id=order_obj.get('goods_id'))
+            return Response({'flag': 'success'})
+        except Exception as e:
+            return Response({'flag': 'error', 'error': str(e)})
+
+
+class CollectionView(APIView):
+    authentication_classes = (BasicAuthentication, SessionAuthentication, TokenAuthentication)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        id = request.query_params.get('id')
+        query = request.query_params.get('query')
+        # 说明是查询自己的收藏记录
+        if query == 'mine':
+            collection_queryset = MyCollection.objects.filter(user=request.user).order_by('-create_time')
+            ser_obj = CollectionSerializer(collection_queryset, many=True)
+            print(ser_obj.data)
+            return Response(ser_obj.data)
+        else:
+            user = request.user
+            collection_queryset = MyCollection.objects.filter(goods_id=id, user=user)
+            print(id, user)
+            if collection_queryset:
+                return Response({'flag': 'success', 'msg': True})
+            return Response({'flag': 'success', 'msg': False})
+
+    # 添加收藏
+    def post(self, request):
+        id = request.data.get('id')
+        user = request.user
+        collection_queryset = MyCollection.objects.filter(goods_id=id, user=user)
+        print(id)
+        if collection_queryset:
+            collection_queryset.delete()
+            return Response({'flag': 'success', 'msg': '取消收藏成功'})
+        MyCollection.objects.create(user=user, goods_id=id)
+        return Response({'flag': 'success', 'msg': '收藏成功'})
+
+    # 删除收藏
+    def delete(self, request):
+        id = request.data.get('id')
+        collection = MyCollection.objects.filter(id=id)
+        print(id)
+        collection.delete()
+        return Response({'flag': 'success'})

@@ -6,7 +6,7 @@
       <el-breadcrumb-item>个人信息</el-breadcrumb-item>
       <el-breadcrumb-item>基本资料</el-breadcrumb-item>
     </el-breadcrumb>
-    <h3><i class="el-icon-edit"></i>&nbsp;要更新您的资料吗，亲？</h3>
+    <h3 class="start"><i class="el-icon-edit"></i>&nbsp;要更新您的资料吗，亲？</h3>
     <el-form :model="form"
              ref="form"
              label-width="80px"
@@ -169,5 +169,8 @@ export default {
   width: 500px;
   margin: 0 auto;
   text-align: left;
+}
+.start{
+  margin-top: 150px
 }
 </style>

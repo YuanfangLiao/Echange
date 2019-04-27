@@ -6,7 +6,7 @@
       <el-breadcrumb-item>个人信息</el-breadcrumb-item>
       <el-breadcrumb-item>修改头像</el-breadcrumb-item>
     </el-breadcrumb>
-    <h3><i class="el-icon-upload"></i>&nbsp;要更新您的头像吗，亲？</h3>
+    <h3 class="start"><i class="el-icon-upload"></i>&nbsp;要更新您的头像吗，亲？</h3>
     <el-upload class="avatar-uploader"
                action="http://localhost:8000/api/upload_pic"
                :show-file-list="false"
@@ -138,5 +138,8 @@ export default {
   width: 178px;
   height: 178px;
   display: block;
+}
+.start{
+  margin-top: 150px
 }
 </style>

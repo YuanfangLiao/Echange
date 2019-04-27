@@ -6,7 +6,7 @@
       <el-breadcrumb-item>个人信息</el-breadcrumb-item>
       <el-breadcrumb-item>修改密码</el-breadcrumb-item>
     </el-breadcrumb>
-    <h3><i class="el-icon-warning"></i>&nbsp;要改密码吗，亲？</h3>
+    <h3 class="start"><i class="el-icon-warning"></i>&nbsp;要改密码吗，亲？</h3>
     <el-form ref="form"
              :model="form"
              label-width="80px"
@@ -111,5 +111,8 @@ export default {
   width: 500px;
   margin: 0 auto;
   text-align: left;
+}
+.start{
+  margin-top: 150px
 }
 </style>

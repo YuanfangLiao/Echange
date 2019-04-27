@@ -59,8 +59,17 @@ export default {
     },
     checkuserpic: function () {
       let usr = this.$store.state.userinfo
-      if (!usr || usr === undefined) return false
-      else return true
+      try {
+        let aaa = usr.picture
+        console.log(aaa)
+        if (aaa === undefined) return false
+        else return true
+      } catch (error) {
+        return false
+      }
+      // console.log(usr)
+      // if (!usr || usr === undefined) return false
+      // else return true
     }
   }
 }

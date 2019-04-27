@@ -21,16 +21,18 @@ export default new Router({
       name: 'home',
       components: {
         default: Home,
-        header: MyHeader},
-      meta: {isLogin: false}
+        header: MyHeader
+      },
+      meta: { isLogin: false }
     },
     {
       path: '/goods',
       name: 'goods',
       components: {
         default: Goods,
-        header: MyHeader},
-      meta: {isLogin: true},
+        header: MyHeader
+      },
+      meta: { isLogin: true },
       children: [
         {
           path: ':id',
@@ -51,7 +53,8 @@ export default new Router({
       name: 'login',
       components: {
         default: Login,
-        header: MyHeader},
+        header: MyHeader
+      },
       meta: {
         isLogin: false
       }
@@ -61,7 +64,8 @@ export default new Router({
       name: 'register',
       components: {
         default: Register,
-        header: MyHeader},
+        header: MyHeader
+      },
       meta: {
         isLogin: false
       }
@@ -73,24 +77,88 @@ export default new Router({
         default: Personal,
         header: MyHeader
       },
-      meta: {isLogin: true},
+      meta: { isLogin: true },
       children: [
         {
           path: 'image',
           name: 'personalImage',
-          components: {personal: (resolve) => require(['../components/views/personal/Image.vue'], resolve)},
-          meta: {isLogin: true}
+          components: {
+            personal: resolve =>
+              require(['../components/views/personal/Image.vue'], resolve)
+          },
+          meta: { isLogin: true }
         },
         {
           path: 'info',
           name: 'personalInfo',
-          components: { personal: (resolve) => require(['../components/views/personal/Info.vue'], resolve) },
+          components: {
+            personal: resolve =>
+              require(['../components/views/personal/Info.vue'], resolve)
+          },
           meta: { isLogin: true }
         },
         {
           path: 'password',
           name: 'personalPassword',
-          components: { personal: (resolve) => require(['../components/views/personal/Password.vue'], resolve) },
+          components: {
+            personal: resolve =>
+              require(['../components/views/personal/Password.vue'], resolve)
+          },
+          meta: { isLogin: true }
+        },
+        {
+          path: 'publish',
+          name: 'personalPublish',
+          components: {
+            personal: resolve =>
+              require(['../components/views/personal/MyPublish.vue'], resolve)
+          },
+          meta: { isLogin: true },
+          children: [
+            {
+              path: ':id',
+              name: 'personalPublishDetail',
+              components: {
+                personalDetail: resolve =>
+                  require([
+                    '../components/views/personal/MyPublishDetail.vue'
+                  ], resolve)
+              },
+              meta: { isLogin: true }
+            }
+          ]
+        },
+        {
+          path: 'order',
+          name: 'personalOrder',
+          components: {
+            personal: resolve =>
+              require(['../components/views/personal/MyOrder.vue'], resolve)
+          },
+          meta: { isLogin: true },
+          children: [
+            {
+              path: ':id',
+              name: 'personalOrderDetail',
+              components: {
+                personalDetail: resolve =>
+                  require([
+                    '../components/views/personal/MyOrderDetail.vue'
+                  ], resolve)
+              },
+              meta: { isLogin: true }
+            }
+          ]
+        },
+        {
+          path: 'collection',
+          name: 'personalCollection',
+          components: {
+            personal: resolve =>
+              require([
+                '../components/views/personal/MyCollection.vue'
+              ], resolve)
+          },
           meta: { isLogin: true }
         }
       ]
@@ -100,7 +168,8 @@ export default new Router({
       name: 'publish',
       components: {
         default: Publish,
-        header: MyHeader},
+        header: MyHeader
+      },
       meta: {
         isLogin: true
       }

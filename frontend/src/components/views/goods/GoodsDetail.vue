@@ -5,7 +5,7 @@
       <el-breadcrumb-item>全部商品</el-breadcrumb-item>
       <el-breadcrumb-item>详细信息</el-breadcrumb-item>
     </el-breadcrumb>
-    <br/>
+    <br />
     <el-row>
       <el-col :span="8">
         <div class="grid-content bg-purple">
@@ -54,8 +54,21 @@
             {{ good_detail.create_time | timeFormat }}
           </p>
           <el-button type="primary"
+                     @click="goWant"
+                     v-if="!isOrdered"
                      plain>我想要</el-button>
-          <el-button type="warning">收藏</el-button>
+          <el-button type="primary"
+                     v-if="isOrdered"
+                     disabled=""
+                     plain>您已申请</el-button>
+          <el-button type="warning"
+                     v-if="!isCollected"
+                     @click="goCollection">
+            收藏</el-button>
+          <el-button type="warning"
+                     v-if="isCollected"
+                     @click="goCollection">
+            取消收藏</el-button>
         </div>
       </el-col>
       <el-col :span="6"
@@ -187,7 +200,9 @@ export default {
       good_id: '',
       good_detail: {},
       activeName: 'first',
-      similar_goods: {}
+      similar_goods: {},
+      isCollected: false,
+      isOrdered: false
     }
   },
   methods: {
@@ -199,6 +214,23 @@ export default {
     },
     initData () {
       console.log('路由发送变化doing...')
+    },
+    goWant () {
+      this.$router.push(`/goods/${this.$route.params.id}/want`)
+    },
+    goCollection () {
+      let that = this
+      let params = that.$qs.stringify({
+        id: this.$route.params.id
+      })
+      console.log(this.$route.params.id)
+      this.$axios.post('/goods_api/collection', params).then(res => {
+        that.$message.success(res.data.msg)
+        if (res.data.msg === '收藏成功') this.isCollected = true
+        else this.isCollected = false
+      }).catch(err => {
+        console.log(err)
+      })
     }
   },
   watch: {
@@ -216,6 +248,23 @@ export default {
       }
     }).then(res => {
       this.similar_goods = res.data
+    })
+    // 检查是否收藏
+    this.$axios.get('/goods_api/collection', {
+      params: {
+        id: this.$route.params.id
+      }
+    }).then(res => {
+      console.log(res.data)
+      this.isCollected = res.data.msg
+    })
+    // 检查是否购买
+    this.$axios.get('/api/user_goods_check', {
+      params: {
+        id: this.$route.params.id
+      }
+    }).then(res => {
+      if (res.data.flag === 'fail') { this.isOrdered = true }
     })
   },
   mounted () {
@@ -265,7 +314,7 @@ export default {
   position: relative;
   max-height: 100%;
   max-width: 100%;
-  width: auto;
+  width: 100%;
   height: auto;
   top: 50%;
   left: 50%;
@@ -331,7 +380,7 @@ export default {
   display: flex;
   flex-direction: column;
 }
-.el-icon-arrow-right{
-    margin-bottom: 20px
+.el-icon-arrow-right {
+  margin-bottom: 20px;
 }
 </style>

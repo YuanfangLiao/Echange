@@ -22,28 +22,30 @@
               <span>个人信息</span>
             </template>
             <el-menu-item :route="{name: 'personalImage'}"
-                          index="image">修改头像</el-menu-item>
+                          index="personalImage">修改头像</el-menu-item>
             <el-menu-item :route="{name: 'personalInfo'}"
-                          index="info">基本资料</el-menu-item>
+                          index="personalInfo">基本资料</el-menu-item>
             <el-menu-item :route="{name: 'personalPassword'}"
-                          index="password">修改密码</el-menu-item>
+                          index="personalPassword">修改密码</el-menu-item>
           </el-submenu>
           <el-submenu index="2">
             <template slot="title">
               <i class="el-icon-menu"></i>
               <span slot="title">换物中心</span>
             </template>
-            <el-menu-item :route="{name: 'personalImage'}"
-                          index="image">我的发布</el-menu-item>
-            <el-menu-item :route="{name: 'personalInfo'}"
-                          index="info">我想换的</el-menu-item>
+            <el-menu-item :route="{name: 'personalPublish'}"
+                          index="personalPublish">我的发布</el-menu-item>
+            <el-menu-item :route="{name: 'personalOrder'}"
+                          index="personalOrder">我的换物</el-menu-item>
+            <el-menu-item :route="{name: 'personalCollection'}"
+                          index="personalCollection">我的收藏</el-menu-item>
           </el-submenu>
           <el-menu-item index="3"
                         disabled>
             <i class="el-icon-document"></i>
             <span slot="title">导航三</span>
           </el-menu-item>
-          <el-menu-item index="4">
+          <el-menu-item @click="doLogout">
             <i class="el-icon-close"></i>
             <span slot="title">退出登陆</span>
           </el-menu-item>
@@ -75,6 +77,28 @@ export default {
     },
     goPersonal () {
       this.$router.push('/personal')
+    },
+    doLogout () {
+      console.log('登出中')
+      this.$confirm('确定要登出吗，亲？', '登出确认', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        localStorage.removeItem('Token')
+        this.$store.dispatch('setToken', null)
+        this.$router.push('/login')
+        this.myusername = ''
+        this.$message({
+          type: 'success',
+          message: '登出成功！'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消登出'
+        })
+      })
     }
   },
   mounted () {
@@ -99,7 +123,8 @@ export default {
 
 <style scoped>
 .main-container {
-  min-height: 800px;
+  height: 800px;
+  overflow: auto;
 }
 .el-menu-vertical {
   min-height: 800px;
@@ -108,7 +133,7 @@ export default {
   background-color: #e9eef3;
   color: #333;
   text-align: center;
-  line-height: 160px;
+  /* line-height: 160px; */
 }
 .user_img {
   margin-top: 30px;
