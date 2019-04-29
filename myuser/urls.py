@@ -1,6 +1,7 @@
 from django.urls import path
 
 from myuser import views
+from myuser import chatView
 
 urlpatterns = [
     path('register', views.RegisterView.as_view()),

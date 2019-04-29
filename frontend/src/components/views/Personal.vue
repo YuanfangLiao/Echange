@@ -40,11 +40,16 @@
             <el-menu-item :route="{name: 'personalCollection'}"
                           index="personalCollection">我的收藏</el-menu-item>
           </el-submenu>
-          <el-menu-item index="3"
-                        disabled>
-            <i class="el-icon-document"></i>
-            <span slot="title">导航三</span>
-          </el-menu-item>
+          <el-submenu index="3">
+            <template slot="title">
+              <i class="el-icon-message"></i>
+              <span slot="title">消息中心</span>
+            </template>
+            <el-menu-item :route="{name: 'personalChat'}"
+                          index="personalChat">我的聊天</el-menu-item>
+            <!-- <el-menu-item :route="{name: 'personalOrder'}"
+                          index="personalOrder">我的换物</el-menu-item> -->
+          </el-submenu>
           <el-menu-item @click="doLogout">
             <i class="el-icon-close"></i>
             <span slot="title">退出登陆</span>

@@ -26,3 +26,9 @@ class MyUser(AbstractUser):
     class Meta:
         # managed = False
         db_table = 'my_user'
+
+
+class Chat(models.Model):
+    user1 = models.ForeignKey(MyUser, verbose_name='聊天者1', on_delete=models.SET_NULL, null=True, related_name='user1')
+    user2 = models.ForeignKey(MyUser, verbose_name='聊天者2', on_delete=models.SET_NULL, null=True, related_name='user2')
+    msg = models.TextField(null=True)

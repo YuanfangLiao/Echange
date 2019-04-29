@@ -74,7 +74,7 @@ export default {
     }
   },
   created () {
-    this.good_id = this.$route.params.id
+    this.form.good_id = this.$route.params.id
     this.$axios.get('/goods_api/goods', {
       params: {
         id: this.$route.params.id
@@ -85,23 +85,16 @@ export default {
     }).catch(err => {
       console.log(err)
     })
+    this.$axios.get('/goods/order', {
+      params: {
+        id: this.$route.params.id
+      }
+    }).then(res => {
+      console.log(res.data[0])
+      this.form.msg = res.data[0].msg
+    })
   },
   mounted () {
-    // // 检查是否已经提交过意向
-    // this.$axios.get('/api/user_goods_check', {
-    //   params: {
-    //     id: this.$route.params.id
-    //   }
-    // }).then(res => {
-    //   // 发布成功
-    //   if (res.data.flag !== 'success') {
-    //     this.$notify.error({ title: '您已经提交过了',
-    //       message: res.data.msg })
-    //     this.$router.push('/home')
-    //   }
-    // }).catch(err => {
-    //   console.log(err)
-    // })
   },
   components: {
 

@@ -160,6 +160,28 @@ export default new Router({
               ], resolve)
           },
           meta: { isLogin: true }
+        },
+        {
+          path: 'chat',
+          name: 'personalChat',
+          components: {
+            personal: resolve =>
+              require(['../components/views/personal/Chat.vue'], resolve)
+          },
+          meta: { isLogin: true },
+          children: [
+            {
+              path: ':id',
+              name: 'personalChatRoom',
+              components: {
+                personalDetail: resolve =>
+                  require([
+                    '../components/views/personal/ChatRoom.vue'
+                  ], resolve)
+              },
+              meta: { isLogin: true }
+            }
+          ]
         }
       ]
     },
