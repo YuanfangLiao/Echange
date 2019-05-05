@@ -41,7 +41,10 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'app',
     'myuser',
-    'goods'
+    'goods',
+    'xadmin',
+    'crispy_forms',
+    'reversion',
 ]
 
 MIDDLEWARE = [
@@ -88,6 +91,8 @@ STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'upload')
 MEDIA_URL = '/upload/'
+
+STATIC_ROOT = 'plugins'
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, FRONTEND_ROOT),

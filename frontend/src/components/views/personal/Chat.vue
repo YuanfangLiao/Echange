@@ -26,12 +26,13 @@
           </el-table-column>
 
           <el-table-column label="操作">
-            <template>
+            <template slot-scope="scope">
               <el-tooltip class="item"
                           effect="dark"
                           content="点击进入聊天界面"
                           placement="top">
                 <el-button type="primary"
+                          @click="goChat(scope.row.id)"
                            icon="el-icon-message"
                            circle></el-button>
               </el-tooltip>
@@ -68,6 +69,9 @@ export default {
       // 返回和登录用户聊天的username
       if (myusername === user1.username) return user2
       else return user1
+    },
+    goChat (id) {
+      this.$router.push(`/personal/chat/${id}`)
     }
   },
   mounted () {

@@ -112,7 +112,7 @@ export default {
   /* align-items: center; */
   /* justify-content: flex-end; */
   background-color: #e4e7ed;
-  font-size: 0.5em;
+  font-size: 12px;
   padding: 3px 30px;
   box-sizing: border-box;
   color: #8c939d;

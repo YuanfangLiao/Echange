@@ -7,18 +7,33 @@
         <el-breadcrumb-item>全部商品</el-breadcrumb-item>
       </el-breadcrumb>
       <br />
-      <el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)"
+      <!-- <div class="my-filter">
+        <el-select v-model="value"
+                   size='mini'
+                   placeholder="请选择">
+          <el-option v-for="item in options"
+                     :key="item.value"
+                     :label="item.label"
+                     :value="item.value">
+          </el-option>
+        </el-select>
+      </div> -->
+      <el-table :data="getTableData
+        .filter(data => !search || data.title.toLowerCase().includes(search.toLowerCase()))
+        .slice((currentPage-1)*pagesize,currentPage*pagesize)"
                 @row-click="handleRowClick"
+                @sort-change='tableSortChange'
                 @filter-change="filterChange"
+                :row-class-name="everyRow"
                 style="width: 100%">
         <el-table-column prop="id"
+                         label="ID"
                          width="50">
         </el-table-column>
         <el-table-column prop="type"
                          column-key="type"
                          label="筛选种类"
                          :filters="typeFilter"
-                         :filter-method="filterHandler"
                          width="120">
           <!--插入图片链接的代码-->
           <template slot-scope="scope">
@@ -35,19 +50,30 @@
           </template>
         </el-table-column>
         <el-table-column prop="create_time"
+                         label="创建时间"
+                         sortable='custom'
                          width="180">
           <template slot-scope="scope">
             {{ scope.row.create_time | timeFormat }}<br />
             <!-- 卖家: {{ scope.row.publisher.username }} -->
           </template>
         </el-table-column>
-        <el-table-column prop="want">
+        <el-table-column prop="price"
+                         label="估价"
+                         sortable="custom">
           <template slot-scope="scope">
             估价：<span style="color:#F56C6C">¥<span style="color:#F56C6C;font-size:20px">{{ scope.row.price }}</span></span><br />
             想换: {{ scope.row.want }}
           </template>
         </el-table-column>
         <el-table-column prop="publisher.address">
+          <template slot="header"
+                    slot-scope="scope">
+            <el-input v-model="search"
+                      :key="scope.row"
+                      size="mini"
+                      placeholder="输入商品名字搜索" />
+          </template>
           <template slot-scope="scope">
             卖家位置：<br />
             {{ scope.row.publisher.address }}
@@ -80,11 +106,13 @@ export default {
       tableData: [],
       base_url: this.$store.state.base_url,
       // total: this.tableData.length, // 默认数据总数
-      pagesize: 5, // 每页的数据条数
+      pagesize: 10, // 每页的数据条数
       currentPage: 1, // 默认开始页面
       typeFilter: [],
       typeObject: {},
-      total: 0
+      total: 0,
+      search: '',
+      everyRow: 'every-row'
     }
   },
   created () {
@@ -116,19 +144,45 @@ export default {
       console.log(row)
       this.$router.push(`/goods/${row.id}`)
     },
-    filterHandler (value, row, column) {
-      // const property = column['property']
-      console.log(value)
-      return row.type === this.typeObject[value]
-    },
+    // filterHandler (value, row, column) {
+    //   // const property = column['property']
+    //   // console.log(value)
+    //   return row.type === this.typeObject[value]
+    // },
     filterChange (filters) {
       if (filters.type) {
-
+        console.log(filters.type)
+        this.currentPage = 1
+        let params = {}
+        params.query = 'filter'
+        params.filters = JSON.stringify(filters.type)
+        this.getList(params)
       }
+    },
+    tableSortChange (column) {
+      this.currentPage = 1
+      let params = {}
+      params.prop = column.prop
+      params.order = column.order
+      params.query = 'sort'
+      console.log(params)
+      this.getList(params)
+    },
+    getList (params) {
+      let that = this
+      that.$axios.get('/goods_api/goods', {
+        params: params
+      }).then(res => {
+        // 渲染视图
+        this.tableData = res.data
+        this.total = res.data.length
+      })
     }
   },
   computed: {
-
+    getTableData () {
+      return this.tableData
+    }
   },
   filters: {
     timeFormat
@@ -156,5 +210,14 @@ export default {
   width: 100%;
   margin: 0 auto;
   text-align: center;
+}
+.my-filter {
+  width: 100%;
+  height: 30px;
+  background-color: darkgray;
+  opacity: 0.5;
+}
+.every-row:hover{
+  cursor: pointer;
 }
 </style>

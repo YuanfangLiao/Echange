@@ -5,9 +5,9 @@ from django.db import models
 # Create your models here.
 
 class MyUser(AbstractUser):
-    # 用户类型
-    USER_TYPE_CHOICE = ((1, "normal"), (2, "admin"))
-    user_type = models.IntegerField(choices=USER_TYPE_CHOICE, null=False, default=1)
+    # 用户类型 已废弃
+    # USER_TYPE_CHOICE = ((1, "normal"), (2, "admin"))
+    # user_type = models.IntegerField(choices=USER_TYPE_CHOICE, null=False, default=1)
     # 性别
     USER_SEX_CHOICE = ((1, '男'), (2, '女'))
     sex = models.IntegerField(choices=USER_SEX_CHOICE, null=False, default=1)
@@ -24,8 +24,8 @@ class MyUser(AbstractUser):
         return self.username
 
     class Meta:
-        # managed = False
         db_table = 'my_user'
+        verbose_name_plural = '用户'
 
 
 class Chat(models.Model):

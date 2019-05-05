@@ -7,6 +7,7 @@ import Login from '../components/views/Login'
 import Register from '../components/views/Register'
 import Publish from '../components/views/Publish'
 import Personal from '../components/views/Personal'
+import Search from '../components/views/Search'
 import Want from '../components/views/goods/Want'
 import GoodsDetail from '../components/views/goods/GoodsDetail'
 // import GoodsDetail from '../components/views/goods/GoodsDetail'
@@ -182,6 +183,28 @@ export default new Router({
               meta: { isLogin: true }
             }
           ]
+        },
+        {
+          path: 'sell',
+          name: 'personalSell',
+          components: {
+            personal: resolve =>
+              require(['../components/views/personal/MySell.vue'], resolve)
+          },
+          meta: { isLogin: true },
+          children: [
+            {
+              path: ':id',
+              name: 'personalSellDetail',
+              components: {
+                personalDetail: resolve =>
+                  require([
+                    '../components/views/personal/MySellDetail.vue'
+                  ], resolve)
+              },
+              meta: { isLogin: true }
+            }
+          ]
         }
       ]
     },
@@ -190,6 +213,17 @@ export default new Router({
       name: 'publish',
       components: {
         default: Publish,
+        header: MyHeader
+      },
+      meta: {
+        isLogin: true
+      }
+    },
+    {
+      path: '/search/:str',
+      name: 'search',
+      components: {
+        default: Search,
         header: MyHeader
       },
       meta: {

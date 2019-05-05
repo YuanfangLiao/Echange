@@ -55,20 +55,24 @@
           </p>
           <el-button type="primary"
                      @click="goWant"
-                     v-if="!isOrdered"
+                     v-if="!isOrdered && good_detail.active"
                      plain>我想要</el-button>
           <el-button type="primary"
-                     v-if="isOrdered"
+                     v-if="isOrdered && good_detail.active"
                      disabled=""
                      plain>您已申请</el-button>
           <el-button type="warning"
-                     v-if="!isCollected"
+                     v-if="!isCollected && good_detail.active"
                      @click="goCollection">
             收藏</el-button>
           <el-button type="warning"
-                     v-if="isCollected"
+                     v-if="isCollected && good_detail.active"
                      @click="goCollection">
             取消收藏</el-button>
+          <el-button type="warning"
+                     disabled
+                     v-if="!good_detail.active">
+            该商品已经卖出或下架，仅供查看</el-button>
         </div>
       </el-col>
       <el-col :span="6"
@@ -129,6 +133,7 @@
                             placement="top">
                   <el-button type="info"
                              icon="el-icon-mobile-phone"
+                             @click="goChat"
                              size="mini"
                              circle></el-button>
                 </el-tooltip>
@@ -183,7 +188,58 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="常见问题"
-                       name="second"></el-tab-pane>
+                       name="second">
+            <div>
+              <div class="inner-detail-detail">
+                <p style="border-bottom:1px dashed #d3dce6;margin-bottom:10px">
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;免责声明：<br /><br />
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EChange易物网站所展示的商品供求信息由买卖双方自行提供，其真实性、准确性和合法性由信息发布人负责。EChange不提供任何保证，并不承担任何法律责任。<br /><br />
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EChange友情提醒：<br /><br />
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;为保障您的利益，请现场成交，贵重物品，请妥善交易。<br /><br />
+                </p>
+                <div class="question_tp">什么是EChange</div>
+                <div class="question_dw">
+                  <p>答：EChange是校园物品交换网站，方便您随时随地的对于您的商品进行管理，支持您随时易货，给您提供方便、快捷、安全的易货交易。</p>
+                </div>
+
+                <div class="question_tp">我们网站是做什么的</div>
+                <div class="question_dw">
+                  <p>答：我们是一个以物易物的网站，提供易物平台，您可以在我们网站上注册会员账号并通过实名认证后，可以发布您的商品或服务，将您的商品或服务换取您需要的商品或服务。</p>
+                </div>
+
+                <div class="question_tp">关于发货</div>
+                <div class="question_dw">
+                  <p style="text-align: left;">EChange作为第三方交易平台，在线交易的每一笔订单都需要双方自行协商发货。我们提醒换客在交换商品前认真核实信息，如您对商品详情等任何信息有疑问，请在交易前与对方沟通确认。</p>
+                </div>
+
+                <div class="question_tp">开发票的事宜</div>
+                <div class="question_dw">
+                  <p>答：发票是由商家直接给您开具的，具体事宜您可以直接咨询商家。</p>
+                </div>
+
+                <div class="question_tp">建议交换商品类型</div>
+                <div class="question_dw">
+                  <p>答：我们建议您选择换什么的基本条件：第一是您需要的用的上的商品；第二是您周围人需要并且很好卖出去的商品；第三就是放着也能升值的商品。</p>
+                </div>
+
+                <div class="question_tp">可以无理由退换货吗</div>
+                <div class="question_dw">
+                  <p>答：请在易物以及购买前仔细查看商家的服务条款，目前商品的售后服务都由商家给您提供，每个商家都是不一样的。</p>
+                </div>
+
+                <div class="question_tp">发票的具体问题</div>
+                <div class="question_dw">
+                  <p>答：发票是由商家直接给您开具的，在发票信息栏中显示的信息就是可选用的，没有显示的，就不能填写或选择使用的哦。</p>
+                </div>
+
+                <div class="question_tp">关于售后服务</div>
+                <div class="question_dw">
+                  <p>答：目前商品的售后服务都由商家给您提供，如有疑问，可以随时拨打EChange客服中心电话178-6542-3119。</p>
+                </div>
+
+              </div>
+            </div>
+          </el-tab-pane>
 
         </el-tabs>
 
@@ -228,6 +284,22 @@ export default {
         that.$message.success(res.data.msg)
         if (res.data.msg === '收藏成功') this.isCollected = true
         else this.isCollected = false
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    goChat () {
+      let that = this
+      that.$axios.post('/chat_api/msg', {
+        to_user_id: that.good_detail.publisher.id
+      }).then(res => {
+        let flag = res.data.flag
+        if (flag === 'success') {
+          let chatId = res.data.chat_id
+          this.$router.push(`/personal/chat/${chatId}`)
+        } else {
+          this.$message.error(res.data.msg)
+        }
       }).catch(err => {
         console.log(err)
       })
@@ -382,5 +454,37 @@ export default {
 }
 .el-icon-arrow-right {
   margin-bottom: 20px;
+}
+p {
+  display: block;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+}
+.inner-detail-deatail {
+  padding: 20px;
+}
+.inner-detail-detail p {
+  font-size: 12px;
+  display: block;
+  margin-top: 0;
+  padding-top: 0;
+}
+.inner-detail-detail div {
+  display: flex;
+  flex-direction: column;
+}
+.question_tp {
+  margin-top: 0;
+  padding-top: 0;
+  padding: 18px;
+  font-size: 18px;
+}
+.question_dw {
+  /* margin-top: 0;
+  padding-top:0; */
+  padding: 40px;
+  font-size: 18px;
 }
 </style>

@@ -16,7 +16,7 @@
 
           <el-table-column prop="goods.title"
                            label="商品内容"
-                           width="350">
+                           width="320">
             <template slot-scope="scope">
               <div class="my-flex">
                 <img :src="base_url + scope.row.picture[0]"
@@ -28,7 +28,18 @@
           </el-table-column>
           <el-table-column prop="want"
                            label="想换的"
-                           width="180">
+                           width="130">
+          </el-table-column>
+          <el-table-column prop="active"
+                           label="活跃状态"
+                           width="100">
+            <template slot-scope="scope">
+              <span v-if="scope.row.active">活跃</span>
+              <span v-if="(!scope.row.active)&&(!scope.row.sold)"
+                    style="color:red">下架</span>
+              <span v-if="scope.row.sold"
+                    style="color:red">已卖出</span>
+            </template>
           </el-table-column>
 
           <el-table-column prop="create_time"
@@ -38,24 +49,50 @@
               {{ scope.row.create_time | timeFormat }}
             </template>
           </el-table-column>
-          <el-table-column label="操作">
+          <el-table-column label="操作"
+                           width="200">
             <template slot-scope="scope">
               <el-tooltip class="item"
                           effect="dark"
                           content="点击查看商品详情"
                           placement="top">
                 <el-button type="primary"
+                           size="mini"
                            @click="goGood(scope.row.id)"
                            icon="el-icon-search"
                            circle></el-button>
               </el-tooltip>
               <el-tooltip class="item"
                           effect="dark"
-                          content="点击管理申请"
+                          content="点击修改商品信息"
+                          v-if="scope.row.active"
                           placement="top">
                 <el-button type="warning"
+                           size="mini"
                            @click="goEdit(scope.row.id)"
                            icon="el-icon-edit"
+                           circle></el-button>
+              </el-tooltip>
+              <el-tooltip class="item"
+                          effect="dark"
+                          content="点击下架商品"
+                          v-if="scope.row.active"
+                          placement="top">
+                <el-button type="danger"
+                           size="mini"
+                           @click="goDelete(scope.row.id,scope.$index,tableData)"
+                           icon="el-icon-delete"
+                           circle></el-button>
+              </el-tooltip>
+              <el-tooltip class="item"
+                          effect="dark"
+                          content="点击重新上架商品"
+                          v-if="(!scope.row.active)&&(!scope.row.sold)"
+                          placement="top">
+                <el-button type="success"
+                           size="mini"
+                           @click="goRepublish(scope.row.id,scope.$index,tableData)"
+                           icon="el-icon-upload2"
                            circle></el-button>
               </el-tooltip>
             </template>
@@ -89,6 +126,61 @@ export default {
     },
     goEdit (id) {
       this.$router.push(`/personal/publish/${id}`)
+    },
+    goRepublish (id, index, rows) {
+      this.$confirm('确定重新发布吗，亲？', '重新发布确认', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$axios.put('/goods_api/goods', {
+          query: 'republish',
+          id: id
+        }).then(res => {
+          if (res.data.flag === 'success') {
+            this.$message.success('重新发布商品成功')
+            this.getList()
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消重新发布'
+        })
+      })
+    },
+    goDelete (id, index, rows) {
+      this.$confirm('确定删除吗，亲？', '删除确认', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$axios.delete('/goods_api/goods', {
+          data: {
+            id: id
+          }
+        }).then(res => {
+          if (res.data.flag === 'success') {
+            this.$message.success('删除商品成功')
+            this.getList()
+            // rows.splice(index, 1)
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消删除'
+        })
+      })
+    },
+    getList () {
+      this.$axios.get('/goods_api/goods', {
+        params: {
+          query: 'mine'
+        }
+      }).then(res => {
+        this.tableData = res.data
+      })
     }
   },
   components: {

@@ -13,7 +13,7 @@ class GoodsSerializer(serializers.ModelSerializer):
     def get_picture(self, obj):
         # 序列化的时候，把字符串转换成js的Array
         picture_list = obj.picture.split('$$$')[:-1]
-        print(obj.title + ': ', picture_list)
+        # print(obj.title + ': ', picture_list)
         return picture_list
 
     def get_type_key(self, obj):

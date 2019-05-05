@@ -35,17 +35,37 @@
             </div>
           </el-col>
         </el-row>
+        交易状态 :<span style="color:red">{{ form.status }} </span>
+        &nbsp; &nbsp; &nbsp; &nbsp;
+        交易创建时间 :<span>{{ form.create_time | timeFormat }} </span>
+        <hr style="background-color:#d3dce6;height:1px;border:none" />
         <div class="grid-content msg bg-purple-light">
-              给卖家留言:<br />
-              <el-input type="textarea"
-                        :rows="2"
-                        placeholder="选填"
-                        v-model="form.msg">
-              </el-input>
-            </div>
+          给卖家留言:<br />
+          <el-input type="textarea"
+                    :rows="2"
+                    placeholder="选填"
+                    v-model="form.msg">
+          </el-input>
+        </div>
       </div>
     </div>
-
+    <div class="my-operation-field">
+      <el-button type="success"
+                 @click="changeMsg"
+                 round>修改留言</el-button>
+      <el-button type="success"
+                 @click="contactSeller"
+                 round>联系卖家</el-button>
+      <el-tooltip class="item"
+                  effect="dark"
+                  content="当卖家确认交易后方可确认收货"
+                  placement="top">
+        <el-button type="success"
+                   :disabled="getConfirmButtonStatus"
+                   @click="finishOrder"
+                   round>确认收货</el-button>
+      </el-tooltip>
+    </div>
   </div>
 </template>
 
@@ -69,15 +89,18 @@ export default {
       },
       form: {
         msg: '',
-        goods_id: 0
-      }
+        goods_id: 0,
+        id: '',
+        create_time: ''
+      },
+      getConfirmButtonStatus: true
     }
   },
   created () {
     this.form.good_id = this.$route.params.id
     this.$axios.get('/goods_api/goods', {
       params: {
-        id: this.$route.params.id
+        order_id: this.$route.params.id
       }
     }).then(res => {
       this.goodsDetail = res.data[0]
@@ -90,8 +113,15 @@ export default {
         id: this.$route.params.id
       }
     }).then(res => {
-      console.log(res.data[0])
+      // console.log(res.data[0])
       this.form.msg = res.data[0].msg
+      this.form.id = res.data[0].id
+      this.form.status = res.data[0].status
+      this.form.create_time = res.data[0].create_time
+      // 如果确认交易才放开确认收货按钮
+      if (res.data[0].status === '确认交易') {
+        this.getConfirmButtonStatus = false
+      }
     })
   },
   mounted () {
@@ -103,6 +133,61 @@ export default {
     getImgBaseUrl: function () {
       return this.$store.state.base_url
     }
+  },
+  methods: {
+    changeMsg: function () {
+      let that = this
+      that.$axios.put('/goods_api/order', {
+        id: this.$route.params.id,
+        msg: this.form.msg
+      }
+      ).then(res => {
+        if (res.data.flag === 'success') {
+          this.$message.success('修改成功')
+        } else {
+          this.$message.error('修改失败')
+        }
+      })
+    },
+    contactSeller: function () {
+      let that = this
+      that.$axios.post('/chat_api/msg', {
+        to_user_id: that.goodsDetail.publisher.id
+      }).then(res => {
+        let flag = res.data.flag
+        if (flag === 'success') {
+          let chatId = res.data.chat_id
+          this.$router.push(`/personal/chat/${chatId}`)
+        } else {
+          this.$message.error(res.data.msg)
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    finishOrder: function () {
+      this.$confirm('确认已经完成线下交易，并终结交易吗？', '完成交易确认', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let that = this
+        that.$axios.put('/goods_api/order', {
+          id: that.$route.params.id,
+          status: 4
+        }).then(res => {
+          if (res.data.flag === 'success') {
+            that.$message.success('恭喜您，交易完全成功了')
+            that.getConfirmButtonStatus = true
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消确认'
+        })
+      })
+    }
   }
 }
 </script>
@@ -111,7 +196,7 @@ export default {
 .inner-page {
   width: 80%;
   margin: 0 auto;
-  margin-top: 50px
+  margin-top: 50px;
 }
 .inner-info {
   background-color: RGBA(211, 220, 230, 0.3);

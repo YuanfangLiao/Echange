@@ -129,7 +129,7 @@ export default {
           if (res.data.flag === 'success') {
             this.$notify.success({ title: '申请成功',
               message: '申请交易意向成功' })
-            this.$router.push('/personal')
+            this.$router.push('/personal/order')
           } else {
             this.$notify.error({ title: '申请失败',
               message: res.data.error })

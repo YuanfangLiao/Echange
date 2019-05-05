@@ -66,7 +66,11 @@ export default {
       chatInfo: {
         toUsername: ''
       },
-      chatMsg: [{ 'time': '2019.04.29 12:28:33', 'user_id': 3, 'img': 'img/timg.jpg', 'username': 'user', 'msg': '消息' }]
+      chatMsg: [{ 'time': '2019.04.29 12:28:33',
+        'user_id': 3,
+        'img': 'img/timg.jpg',
+        'username': 'user',
+        'msg': '您好，我们可以在系统中沟通了' }]
     }
   },
   components: {
@@ -86,9 +90,15 @@ export default {
       console.log(err)
     })
     this.updateMsgList()
-    // 聊天框滑到最底下
-    let container = this.$el.querySelector('#chat-inner-center')
-    container.scrollTop = container.scrollHeight
+
+    for (let index = 0; index < 5; index++) {
+      // 聊天框滑到最底下
+      setTimeout(() => {
+        let container = this.$el.querySelector('#chat-inner-center')
+        container.scrollTop = container.scrollHeight
+      }, 300)
+    }
+
     // 循环发请求更新数据
     this.updateMsgInterval = setInterval(this.updateMsgList, 5000)
   },
@@ -189,6 +199,6 @@ export default {
 .main-msg-box-right-top {
   color: #909399;
   font-size: 12px;
-  margin-bottom: 3px
+  margin-bottom: 3px;
 }
 </style>

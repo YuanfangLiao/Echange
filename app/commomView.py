@@ -2,11 +2,14 @@ import os
 import random
 
 from PIL import Image
+from django.db.models import Q
 from django.http import JsonResponse, HttpResponse
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from DjangoGoodsExchange import settings
+from app.models import Carousel
+from app.serializers import CarouselSerializer
 from goods.models import Goods, Order
 
 # 通用获取所有分类信息接口
@@ -99,4 +102,56 @@ class SimilarGoodsApi(APIView):
             goods_queryset = goods_queryset[:5]
 
         ser_obj = GoodsSerializer(goods_queryset, many=True)
+        return Response(ser_obj.data)
+
+
+class CarouselView(APIView):
+
+    def get(self, request):
+        carousels_obj = Carousel.objects.all()
+        ser_obj = CarouselSerializer(carousels_obj, many=True)
+        return Response(ser_obj.data)
+
+
+class SearchGoodsView(APIView):
+
+    def get(self, request):
+        id = request.query_params.get('id')
+        query = request.query_params.get('query')
+        kw = request.query_params.get('kw')
+        goods = Goods.objects.all().filter(active=True)
+        try:
+            goods = goods.filter(Q(title__contains=kw) | Q(publisher__address__contains=kw) |
+                                 Q(want__contains=kw) | Q(detail__contains=kw) | Q(pk=int(kw)))
+        except Exception:
+            goods = goods.filter(Q(title__contains=kw) | Q(publisher__address__contains=kw) |
+                                 Q(want__contains=kw) | Q(detail__contains=kw))
+
+        if query == 'sort':
+            prop = request.query_params.get('prop')
+            order = request.query_params.get('order')
+            print(type(order))
+            left = ''
+            # final = ''
+            if order == 'descending':
+                left = '-'
+            elif order == 'ascending':
+                left = ''
+            # 只有两个排序条件都有才进行排序
+            if prop and order:
+                final = left + prop
+                print(final)
+                goods = goods.order_by(final)
+        #  如果是过滤器
+        elif query == 'filter':
+            filters = request.query_params.get('filters')
+            filters = eval(filters)
+            goods = goods.filter(type__in=filters)
+
+        else:
+            goods = goods.order_by('-create_time')
+            if len(goods) > 50:
+                goods = goods[:50]
+        ser_obj = GoodsSerializer(goods, many=True)
+        print(ser_obj.data)
         return Response(ser_obj.data)

@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from myuser.models import Chat
+from myuser.models import Chat, MyUser
 from myuser.serializers import ChatSerializer, MyUserSerializer
 
 
@@ -48,6 +48,23 @@ class ChatMsgView(APIView):
         chat_obj = Chat.objects.filter(pk=id).first()
         msg_obj = eval(chat_obj.msg)
         return Response({'msg': msg_obj})
+
+    # 添加一条新的聊天会话记录
+    def post(self, request):
+        to_user_id = request.data.get('to_user_id')
+        user1 = MyUser.objects.filter(id=to_user_id).first()
+        user2 = request.user
+        # 如果是同一个用户，禁止创建
+        if user1 == user2:
+            return Response({'flag': 'error', 'msg': '禁止与自己创建聊天'})
+
+        # 尝试获取聊天记录，如果获取就返回结果，如果是空的，则新建
+        chat_obj = Chat.objects.filter((Q(user1=user1) & Q(user2=user2)) | (Q(user1=user2) & Q(user2=user1)))
+        if chat_obj:
+            return Response({'flag': 'success', 'chat_id': chat_obj.first().id})
+        else:
+            chat_obj = Chat.objects.create(user1=user1, user2=user2, msg='[]')
+            return Response({'flag': 'success', 'chat_id': chat_obj.id})
 
     def put(self, request):
         data = request.data

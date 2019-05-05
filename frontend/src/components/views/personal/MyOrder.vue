@@ -33,6 +33,9 @@
           <el-table-column prop="status"
                            width="120"
                            label="订单状态">
+            <template slot-scope="scope">
+              <span style="color:red">{{ scope.row.status }}</span>
+            </template>
           </el-table-column>
           <el-table-column prop="create_time"
                            label="申请日期"

@@ -12,6 +12,7 @@
       <el-form-item label="密码"
                     prop="password">
         <el-input show-password
+                  @keyup.enter.native="onSubmit"
                   v-model="form.password"></el-input>
       </el-form-item>
       <el-form-item>

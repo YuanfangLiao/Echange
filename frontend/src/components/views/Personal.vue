@@ -37,6 +37,8 @@
                           index="personalPublish">我的发布</el-menu-item>
             <el-menu-item :route="{name: 'personalOrder'}"
                           index="personalOrder">我的换物</el-menu-item>
+            <el-menu-item :route="{name: 'personalSell'}"
+                          index="personalSell">物主中心</el-menu-item>
             <el-menu-item :route="{name: 'personalCollection'}"
                           index="personalCollection">我的收藏</el-menu-item>
           </el-submenu>

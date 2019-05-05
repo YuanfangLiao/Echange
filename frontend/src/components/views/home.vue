@@ -1,9 +1,11 @@
 <template>
   <div>
     <el-carousel indicator-position="outside">
-      <el-carousel-item v-for="item in 4"
-                        :key="item">
-        <h3>{{ item }}</h3>
+      <el-carousel-item v-for="(item,index) in carousels"
+                        :key="index">
+        <img :src="base_url1 + item.img"
+             width="100%"
+             height="100%">
       </el-carousel-item>
     </el-carousel>
     <br /><br />
@@ -16,6 +18,7 @@
               class="goods-card">
         <el-card :body-style="{ padding: '0px' }">
           <img :src="base_url + item.picture[0]"
+               @click="dumpDetail(item.id)"
                class="image">
           <div style="padding: 14px;">
             <span>{{item.title}}</span>
@@ -40,16 +43,25 @@ export default {
     return {
       currentDate: new Date(),
       goods_list: [],
-      base_url: this.$store.state.base_url
+      base_url: this.$store.state.base_url,
+      base_url1: this.$store.state.base_url1,
+      carousels: []
     }
   },
   name: 'home',
   mounted: function () {
     let that = this
     console.log('hello')
-    this.$axios.get('/goods/goods').then(data => {
+    that.$axios.get('/goods/goods', {
+      params: {
+        query: 'index'
+      }
+    }).then(data => {
       that.goods_list = data.data
       console.log(that.base_url + that.goods_list[0].picture)
+    })
+    that.$axios.get('/api/carousel').then(res => {
+      that.carousels = res.data
     })
   },
   filters: {
@@ -91,6 +103,10 @@ export default {
 .image {
   width: 100%;
   display: block;
+}
+.image:hover {
+  cursor: pointer;
+  opacity: 0.5;
 }
 
 .clearfix:before,
@@ -135,6 +151,8 @@ export default {
 .my-index-box {
   display: flex;
   flex-direction: row;
+  justify-content: space-around;
   flex-wrap: wrap;
+  align-content: flex-start
 }
 </style>

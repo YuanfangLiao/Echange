@@ -14,13 +14,16 @@
                width="80px"
                height="80px"
                class="user_img1"></div>
-        <el-form :inline="true"
+        <el-form ref="form"
+                 :inline="true"
                  v-model="form"
                  class="form-inline">
-          <el-form-item label="" prop="search">
+          <el-form-item label=""
+                        prop="search">
             <el-input class="search-input"
                       v-model="form.search"
-                      placeholder="搜索内容"
+                      placeholder="输入搜索商品关键字"
+                      @keyup.enter.native="onSubmit"
                       clearable></el-input>
           </el-form-item>
           <el-form-item>
@@ -48,7 +51,9 @@ export default {
   name: 'myHeaderMiddle',
   methods: {
     onSubmit () {
-
+      if (this.form.search) this.$router.replace(`/search/${this.form.search}`)
+      else if (this.form.search === '') this.$message.warning('请填写搜索关键字')
+      else this.$message.warning('请填写搜索关键字')
     }
   },
   computed: {

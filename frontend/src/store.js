@@ -9,6 +9,7 @@ export default new Vuex.Store({
     token: null,
     // 图片默认路径
     base_url: 'http://localhost:8000/upload/',
+    base_url1: 'http://localhost:8000',
     userinfo: null
   },
   mutations: {
@@ -20,10 +21,10 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    setToken ({commit}, token) {
+    setToken ({ commit }, token) {
       commit('changeToken', token)
     },
-    setUserinfo ({commit}, userinfo) {
+    setUserinfo ({ commit }, userinfo) {
       commit('changeUserinfo', userinfo)
     }
   }

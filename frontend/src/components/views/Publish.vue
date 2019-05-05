@@ -243,10 +243,6 @@ export default {
       this.active--
     },
     next () {
-      // title: '',
-      // type: '',
-      // price: '',
-      // brand: '',
       if (this.active === 0) {
         let form = this.form
         if (form.title && form.type && form.price && form.brand && form.picture) this.active++
