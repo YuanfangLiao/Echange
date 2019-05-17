@@ -11,5 +11,5 @@ urlpatterns = [
     path('user_goods_check', commomView.UserOrderCheckApi.as_view()),
     path('carousel', commomView.CarouselView.as_view()),
     path('search', commomView.SearchGoodsView.as_view()),
-
+    path('test', views.api)
 ]

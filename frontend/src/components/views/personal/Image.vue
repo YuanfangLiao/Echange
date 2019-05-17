@@ -11,8 +11,7 @@
                action="http://localhost:8000/api/upload_pic"
                :show-file-list="false"
                :on-success="handleAvatarSuccess"
-               :before-upload="beforeAvatarUpload"
-               >
+               :before-upload="beforeAvatarUpload">
       <img v-if="imageUrl"
            :src="imageUrl"
            class="avatar"
@@ -20,14 +19,14 @@
       <i v-else
          class="el-icon-plus avatar-uploader-icon"></i>
     </el-upload>
-
+    <br /><br /><br /><br /><br /><br /><br />
     <el-form :model="form"
              v-show="imageUrl!=''? true:false"
              ref="uploadform"
              label-width="100px"
              class="uploadform"
              style="margin-top:-100px">
-      <h6>上传成功，点击图片仍然可以重新上传</h6>
+      <h6><br /><br />上传成功，点击图片仍然可以重新上传</h6>
       <el-form-item label=""
                     v-show="false"
                     prop="url">
@@ -139,7 +138,7 @@ export default {
   height: 178px;
   display: block;
 }
-.start{
-  margin-top: 150px
+.start {
+  margin-top: 150px;
 }
 </style>

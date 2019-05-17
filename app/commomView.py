@@ -80,6 +80,7 @@ class UserOrderCheckApi(APIView):
     def get(self, request):
         goods_id = request.query_params.get('id')
         user = request.user
+        print(user, goods_id)
         order = Order.objects.filter(buyer=user, goods_id=goods_id)
         if order:
             # 已经有记录了，阻止进入

@@ -19,7 +19,7 @@ class IntegerRangeField(models.IntegerField):
 
 class Goods(models.Model):
     title = models.CharField(u'简介', max_length=50)
-    GOODS_TYPE = ((1, '数码产品'), (2, '日用品'), (3, '服饰'), (4, '其他'))
+    GOODS_TYPE = ((1, '数码产品'), (2, '日用品'), (3, '服饰'), (5, '学习用品'), (4, '其他'),)
     type = models.IntegerField(u'分类', choices=GOODS_TYPE)
     active = models.BooleanField(u'是否活跃', default=True)
     sold = models.BooleanField(u'是否被销售', default=False)

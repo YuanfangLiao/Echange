@@ -152,7 +152,7 @@
         <div v-for="item of similar_goods "
              :key="item.id"
              style="border-bottom:1px dashed #d3dce6;margin-bottom:10px">
-          <img width="150px"
+          <img width="150px" height="150px"
                @click="goAnother(item.id)"
                :src="getImgBaseUrl+item.picture[0]" />
           <br />
